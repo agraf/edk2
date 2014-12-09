@@ -37,6 +37,7 @@ typedef unsigned char   U8;
 #define RAM_TEST_NOWORK_TAG          (0x0A0A0A0A) 
 
 EFI_HANDLE mImageHandle;
+static int skip_enter_bootwrapper;
 
 //************************************************
 #define SEEK_SET  0
@@ -757,6 +758,7 @@ BdsEntry (
 //        }
 
         /*---------------OS-----------------*/
+	skip_enter_bootwrapper = 1;
         BootOptionList (&BootOptionsList);
         BootGo (&BootOptionsList);
         #endif
@@ -770,6 +772,53 @@ BdsEntry (
   Status = BootMenuMain ();
   ASSERT_EFI_ERROR (Status);
 
+}
+
+static long bootwrapper_saved_regs[16];
+static volatile int bootwrapper_done;
+EFI_STATUS RunBootwrapper(void);
+
+void RestoreBootwrapperRegs(void)
+{
+  register long p asm("r0") = (long)bootwrapper_saved_regs;
+  bootwrapper_done = 1;
+  asm volatile("ldmfd	%0, { r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r14 }\n\
+		ldr	sp, [%0, #56]\n\
+		ldr	pc, [%0, #60]" : : "r"(p));
+}
+
+static void JumpToRestore(void)
+{
+  asm volatile(".arm; ldr r0, [pc,#0]; bx r0; .word (RestoreBootwrapperRegs + 1); .thumb");
+}
+
+static void EnterBootwrapper(void)
+{
+  register long p asm("r0");
+  int i;
+
+  /* Copy register recovery code to Linux entry point offset */
+  memcpy((void *)KERNEL_DDR_BASE, JumpToRestore, 12);
+
+  (VOID)AsciiPrint("Entering BootWrapper...\n");
+  bootwrapper_done = 0;
+
+  /* reading from PC gives the instruction after the next */
+  p = (long)bootwrapper_saved_regs;
+  asm volatile("stmfd	%0, { r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r14 }\n\
+		add	r3, pc, #4\n\
+		str	r3, [%0, #60]\n\
+		str	sp, [%0, #56]\n\
+		" : : "r"(p) : "cc", "r3");
+
+  for (i = 0; i < 16; i++) {
+    AsciiPrint("  saved[%d] = %x\n", i, bootwrapper_saved_regs[i]);
+  }
+
+  if (!bootwrapper_done)
+    RunBootwrapper();
+  else
+    (VOID)AsciiPrint("BootWrapper successfully entered!\n");
 }
 
 /**
@@ -791,7 +840,11 @@ ExitBootServicesEvent (
   IN VOID       *Context
   )
 {
+  if (skip_enter_bootwrapper)
+    return;
+
   ReadBootwrapper();
+  EnterBootwrapper();
 }
 
 EFI_BDS_ARCH_PROTOCOL  gBdsProtocol = {
