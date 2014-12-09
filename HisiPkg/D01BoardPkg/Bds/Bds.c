@@ -76,7 +76,7 @@ BootGo (
 #define TEXT_DDR_BASE                   0x10c00000
 #define MONITOR_DDR_BASE                0x10c08000         
 #define KERNEL_DDR_BASE                 0x10008000
-#define FILESYSTEM_DDR_BASE             0x10d00000
+#define FILESYSTEM_DDR_BASE             0x20d00000
 
 //estimate size of Linux kernel,the size for copying file to DDR isn't bigger than this
 #define TEXT_SIZE                       0x400000
