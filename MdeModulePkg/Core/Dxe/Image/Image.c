@@ -67,6 +67,7 @@ LOADED_IMAGE_PRIVATE_DATA mCorePrivateImage  = {
   NULL,                       // JumpContext
   0,                          // Machine
   NULL,                       // Ebc
+  NULL,                       // X64Vm
   NULL,                       // RuntimeData
   NULL                        // LoadedImageDevicePath
 };
@@ -686,6 +687,29 @@ CoreLoadPeImage (
     if (EFI_ERROR(Status)) {
       goto Done;
     }
+  } else if (mDxeCoreImageMachineType != EFI_IMAGE_MACHINE_X64 &&
+             Image->ImageContext.Machine == EFI_IMAGE_MACHINE_X64) {
+    //
+    // Locate the X64 interpreter protocol
+    //
+    Status = CoreLocateProtocol (&gEdkiiX64InterpreterProtocolGuid, NULL, (VOID **)&Image->X64Vm);
+    if (EFI_ERROR (Status) || Image->X64Vm == NULL) {
+      DEBUG ((DEBUG_LOAD | DEBUG_ERROR, "CoreLoadPeImage: There is no X64 interpreter.\n"));
+      Status = EFI_UNSUPPORTED;
+      goto Done;
+    }
+
+    if (!Image->X64Vm->IsImageSupported (Image->X64Vm, Image->ImageBasePage)) {
+      Status = EFI_UNSUPPORTED;
+      goto Done;
+    }
+
+    Status = Image->X64Vm->RegisterImage (Image->X64Vm, Image->ImageBasePage,
+                             EFI_PAGES_TO_SIZE (Image->NumberOfPages));
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_LOAD | DEBUG_ERROR, "CoreLoadPeImage: Failed to load X64 image.\n"));
+      goto Done;
+    }
   }
 
   //
@@ -869,6 +893,13 @@ CoreUnloadAndCloseImage (
     // If EBC protocol exists we must perform cleanups for this image.
     //
     Image->Ebc->UnloadImage (Image->Ebc, Image->Handle);
+  }
+
+  if (Image->X64Vm != NULL) {
+    //
+    // If X86 interpreter protocol exists we must unregister the image.
+    //
+    Image->X64Vm->UnregisterImage (Image->X64Vm, Image->ImageBasePage);
   }
 
   //
