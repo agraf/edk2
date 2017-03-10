@@ -462,9 +462,12 @@ ProtectUefiImageCommon (
 
   ImageAddress = LoadedImage->ImageBase;
 
-  PdbPointer = PeCoffLoaderGetPdbPointer ((VOID*) (UINTN) ImageAddress);
-  if (PdbPointer != NULL) {
-    DEBUG ((DEBUG_VERBOSE, "  Image - %a\n", PdbPointer));
+  PdbPointer = NULL;
+  if (ImageAddress != 0) {
+    PdbPointer = PeCoffLoaderGetPdbPointer ((VOID*) (UINTN) ImageAddress);
+    if (PdbPointer != NULL) {
+      DEBUG ((DEBUG_VERBOSE, "  Image - %a\n", PdbPointer));
+    }
   }
 
   //
