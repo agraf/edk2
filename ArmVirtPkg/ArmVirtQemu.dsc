@@ -382,3 +382,5 @@
     <LibraryClasses>
       NULL|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
   }
+
+  OptionRomPkg/X86Emulator/X86Emulator.inf
