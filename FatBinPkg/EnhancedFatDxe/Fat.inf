@@ -48,4 +48,4 @@
   PE32|Arm/Fat.efi|*
 
 [Binaries.AArch64]
-  PE32|AArch64/Fat.efi|*
+  PE32|X64/Fat.efi|*
