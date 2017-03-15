@@ -25,6 +25,11 @@ EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_AARCH64_EXCEPTION + 1] = 
 PHYSICAL_ADDRESS        gExceptionVectorAlignmentMask = ARM_VECTOR_TABLE_ALIGNMENT;
 UINTN                   gDebuggerNoHandlerValue = 0; // todo: define for AArch64
 
+VOID
+RegisterEl0Stack (
+  VOID
+  );
+
 RETURN_STATUS ArchVectorConfig(
   IN  UINTN       VectorBaseAddress
   )
@@ -39,6 +44,8 @@ RETURN_STATUS ArchVectorConfig(
 
     ArmWriteHcr(HcrReg);
   }
+
+  RegisterEl0Stack ();
 
   return RETURN_SUCCESS;
 }

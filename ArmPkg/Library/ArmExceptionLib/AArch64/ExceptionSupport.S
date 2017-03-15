@@ -100,6 +100,7 @@
 
 GCC_ASM_EXPORT(ExceptionHandlersEnd)
 GCC_ASM_EXPORT(CommonCExceptionHandler)
+GCC_ASM_EXPORT(RegisterEl0Stack)
 
 .text
 
@@ -189,7 +190,9 @@ ASM_PFX(SErrorSP0):
 //
 VECTOR_ENTRY(ExceptionHandlersStart, ARM_VECTOR_CUR_SPx_SYNC)
 ASM_PFX(SynchronousExceptionSPx):
+  msr   SPsel, xzr      // switch to the EL0 stack pointer
   ExceptionEntry  EXCEPT_AARCH64_SYNCHRONOUS_EXCEPTIONS
+  msr   SPsel, #1       // switch back to the ELx stack pointer
 
 VECTOR_ENTRY(ExceptionHandlersStart, ARM_VECTOR_CUR_SPx_IRQ)
 ASM_PFX(IrqSPx):
@@ -261,7 +264,18 @@ ASM_PFX(CommonExceptionEntry):
   stp      x26, x27, [sp, #0xd0]
   stp      x28, x29, [sp, #0xe0]
   add      x28, sp, #GP_CONTEXT_SIZE + FP_CONTEXT_SIZE + SYS_CONTEXT_SIZE
-  stp      x30, x28, [sp, #0xf0]
+
+  // Record the ELx stack pointer in the context struct, which
+  // may be different from the one we are using currently
+  mrs      x7, SPsel
+  cbnz     x7, 1f
+  msr      SPsel, #1
+  mov      x7, sp
+  msr      SPsel, xzr
+  b        2f
+
+1:mov      x7, x28
+2:stp      x30, x7, [sp, #0xf0]
 
   // Save the SYS regs
   stp      x2,  x3,  [x28, #-SYS_CONTEXT_SIZE]!
@@ -368,3 +382,13 @@ ASM_PFX(CommonExceptionEntry):
   add      sp, sp, #FP_CONTEXT_SIZE + SYS_CONTEXT_SIZE
 
   eret
+
+ASM_PFX(RegisterEl0Stack):
+  adrp    x0, 0f
+  msr     sp_el0, x0
+  ret
+
+  .bss
+  .align  4
+  .skip   4096
+0:
