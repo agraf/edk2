@@ -14,6 +14,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "InternalBm.h"
 
+#include <Protocol/PciIo.h>
+
 /**
   Connect all the drivers to all the controllers.
 
@@ -44,6 +46,48 @@ BmConnectAllDriversToAllControllers (
            );
 
     for (Index = 0; Index < HandleCount; Index++) {
+      VOID                *ProtocolPointer;
+      EFI_PCI_IO_PROTOCOL *PciIo;
+
+      //
+      // HACK HACK HACK #1
+      //
+      // The NVIDIA GT210 X86 option ROM crashes under X86 emulation on
+      // AArch64 when attempting to attach to the PCI Root Bridge I/O
+      // protocol. So ignore it when connecting all controllers.
+      //
+      Status = gBS->HandleProtocol (HandleBuffer[Index],
+                      &gEfiPciRootBridgeIoProtocolGuid,
+                      &ProtocolPointer);
+      if (!EFI_ERROR (Status)) {
+        continue;
+      }
+
+      //
+      // HACK HACK HACK #2
+      //
+      // The NVIDIA GT210 X86 option ROM crashes under X86 emulation on
+      // AArch64 when attempting to attach to the sound device on the
+      // card. So ignore it as well.
+      //
+      Status = gBS->HandleProtocol (HandleBuffer[Index],
+                      &gEfiPciIoProtocolGuid,
+                      (VOID **)&PciIo);
+      if (!EFI_ERROR (Status)) {
+        UINTN SegmentNumber;
+        UINTN BusNumber;
+        UINTN DeviceNumber;
+        UINTN FunctionNumber;
+
+        Status = PciIo->GetLocation (PciIo, &SegmentNumber, &BusNumber,
+                          &DeviceNumber, &FunctionNumber);
+
+        if (!EFI_ERROR (Status)) {
+          if (BusNumber == 2 && DeviceNumber == 0 && FunctionNumber == 1) {
+            continue;
+          }
+        }
+      }
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
 
