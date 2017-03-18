@@ -33,16 +33,15 @@
 
 [Sources]
   PlatformBm.c
-  QuietBoot.c
 
 [Packages]
-  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
 
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
+  BootLogoLib
   DebugLib
   DevicePathLib
   DxeServicesLib
@@ -54,11 +53,9 @@
   UefiLib
 
 [FeaturePcd]
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 
 [FixedPcd]
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity
@@ -79,6 +76,5 @@
   gEfiDevicePathProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiLoadedImageProtocolGuid
-  gEfiOEMBadgingProtocolGuid
   gEfiPciRootBridgeIoProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
