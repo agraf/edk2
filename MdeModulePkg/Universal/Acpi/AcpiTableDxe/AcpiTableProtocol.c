@@ -130,6 +130,21 @@ PublishTables (
   UINT64                    Buffer64;
 
   //
+  // Don't publish anything yet if we don't have a FADT table. This table is
+  // mandatory for all ACPI compatible OSes, and installing the ACPI entry
+  // point configuration table without a full set of ACPI tables may confuse
+  // some OSes (Linux/arm64). (This may happen when the BGRT or ramdisk drivers
+  // publish their respective ACPI tables without regard for whether ACPI boot
+  // is currently enabled.)
+  //
+  if (AcpiTableInstance->Fadt1 == NULL && AcpiTableInstance->Fadt3 == NULL) {
+    DEBUG ((DEBUG_INFO,
+      "%a: not publishing ACPI tables [yet], no FADT table installed\n",
+      __FUNCTION__));
+    return EFI_SUCCESS;
+  }
+
+  //
   // Reorder tables as some operating systems don't seem to find the
   // FADT correctly if it is not in the first few entries
   //
