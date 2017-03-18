@@ -33,6 +33,9 @@
 
 #define DP_NODE_LEN(Type) { (UINT8)sizeof (Type), (UINT8)(sizeof (Type) >> 8) }
 
+STATIC CONST EFI_GUID mUefiShellFileGuid = {
+  0x7C04A583, 0x9E3E, 0x4f1c, { 0xAD, 0x65, 0xE0, 0x52, 0x68, 0xD0, 0xB4, 0xD1 }
+};
 
 #pragma pack (1)
 typedef struct {
@@ -327,7 +330,7 @@ AddOutput (
 STATIC
 VOID
 PlatformRegisterFvBootOption (
-  EFI_GUID                         *FileGuid,
+  CONST EFI_GUID                   *FileGuid,
   CHAR16                           *Description,
   UINT32                           Attributes
   )
@@ -540,7 +543,7 @@ PlatformBootManagerAfterConsole (
   // Register UEFI Shell
   //
   PlatformRegisterFvBootOption (
-    PcdGetPtr (PcdShellFile), L"UEFI Shell", LOAD_OPTION_ACTIVE
+    &mUefiShellFileGuid, L"UEFI Shell", LOAD_OPTION_ACTIVE
     );
 }
 

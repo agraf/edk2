@@ -59,7 +59,6 @@
 
 [FixedPcd]
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile
-  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity
