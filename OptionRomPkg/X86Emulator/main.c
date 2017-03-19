@@ -273,6 +273,11 @@ static uint64_t stack_pop64(void)
     return r;
 }
 
+static void dump_x86_state(void)
+{
+    cpu_dump_state(env, stdout, fprintf, 0);
+}
+
 bool pc_is_native_return(uint64_t pc)
 {
     printf_verbose("XXX Current IP: %llx\n", pc);
@@ -363,6 +368,19 @@ uint64_t run_x86_func(void *func, uint64_t *args)
              * ----------------
              */
 
+            if (env->eip < 0x1000) {
+                /* Calling into the zero page, this is broken code. Shout out loud. */
+                printf("Invalid jump to zero page from caller %llx\n", *stackargs);
+                dump_x86_state();
+#ifdef BE_PARANOID
+                assert(env->eip >= 0x1000);
+#endif
+
+                /* Try to rescue ourselves as much as we can */
+                env->regs[R_EAX] = EFI_UNSUPPORTED;
+                env->eip = stack_pop64();
+            }
+
             printf_verbose("XXX  Calling aarch64 %p(%llx, %llx, %llx, %llx, %llx, %llx, %llx, %llx)\n",
                            f, env->regs[R_ECX], env->regs[R_EDX], env->regs[8],
                            env->regs[9], stackargs[5], stackargs[6], stackargs[7],
@@ -376,6 +394,8 @@ uint64_t run_x86_func(void *func, uint64_t *args)
             env->eip = stack_pop64();
         } else {
             printf("XXX  Trap: #%x (eip=%lx)\n", trapnr, env->eip);
+            target_disas(stdout, env->eip, 0x100, 0);
+            dump_x86_state();
             ASSERT(FALSE);
             break;
         }
