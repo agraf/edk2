@@ -206,6 +206,8 @@
   OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
   XenHypercallLib|OvmfPkg/Library/XenHypercallLib/XenHypercallLib.inf
 
+  AppleSupportLib|OvmfPkg/Library/AppleSupportLib/AppleSupportLib.inf
+
 [LibraryClasses.common]
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
 

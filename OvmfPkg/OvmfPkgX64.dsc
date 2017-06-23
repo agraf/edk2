@@ -206,7 +206,6 @@
   OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
   XenHypercallLib|OvmfPkg/Library/XenHypercallLib/XenHypercallLib.inf
 
-
   OcAppleImageVerificationLib|OcSupportPkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
   OcAppleKeysLib|OcSupportPkg/Library/OcAppleKeysLib/OcAppleKeysLib.inf
   OcCryptoLib|OcSupportPkg/Library/OcCryptoLib/OcCryptoLib.inf
@@ -223,6 +222,7 @@
   OcDataHubLib|OcSupportPkg/Library/OcDataHubLib/OcDataHubLib.inf
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
+  AppleSupportLib|OvmfPkg/Library/AppleSupportLib/AppleSupportLib.inf
 
 [LibraryClasses.common]
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
