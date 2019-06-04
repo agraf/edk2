@@ -386,6 +386,13 @@ INF  MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
 INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
 !endif
 
+INF  AppleSupportPkg/Platform/AppleImageLoader/AppleImageLoader.inf
+INF  AppleSupportPkg/Platform/AppleUiSupport/AppleUiSupport.inf
+INF  AppleSupportPkg/Platform/ApfsDriverLoader/ApfsDriverLoader.inf
+#INF  AppleSupportPkg/Platform/AppleUsbKbDxe/UsbKbDxe.inf
+INF  AppleSupportPkg/Platform/VirtualSmc/VirtualSmc.inf
+INF  AppleSupportPkg/Platform/VBoxHfs/VBoxHfs.inf
+
 ################################################################################
 
 [FV.FVMAIN_COMPACT]

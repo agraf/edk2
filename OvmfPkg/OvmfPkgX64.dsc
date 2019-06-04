@@ -60,8 +60,8 @@
 !endif
 
 [BuildOptions]
-  GCC:*_UNIXGCC_*_CC_FLAGS             = -DMDEPKG_NDEBUG
-  GCC:RELEASE_*_*_CC_FLAGS             = -DMDEPKG_NDEBUG
+  GCC:*_UNIXGCC_*_CC_FLAGS             = -DMDEPKG_NDEBUG -D DISABLE_NEW_DEPRECATED_INTERFACES
+  GCC:RELEASE_*_*_CC_FLAGS             = -DMDEPKG_NDEBUG -D DISABLE_NEW_DEPRECATED_INTERFACES
   INTEL:RELEASE_*_*_CC_FLAGS           = /D MDEPKG_NDEBUG
   MSFT:RELEASE_*_*_CC_FLAGS            = /D MDEPKG_NDEBUG
 !if $(TOOL_CHAIN_TAG) != "XCODE5"
@@ -205,6 +205,24 @@
   SmbusLib|MdePkg/Library/BaseSmbusLibNull/BaseSmbusLibNull.inf
   OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
   XenHypercallLib|OvmfPkg/Library/XenHypercallLib/XenHypercallLib.inf
+
+
+  OcAppleImageVerificationLib|OcSupportPkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
+  OcAppleKeysLib|OcSupportPkg/Library/OcAppleKeysLib/OcAppleKeysLib.inf
+  OcCryptoLib|OcSupportPkg/Library/OcCryptoLib/OcCryptoLib.inf
+  OcFileLib|OcSupportPkg/Library/OcFileLib/OcFileLib.inf
+  OcGuardLib|OcSupportPkg/Library/OcGuardLib/OcGuardLib.inf
+  OcPngLib|OcSupportPkg/Library/OcPngLib/OcPngLib.inf
+  OcRtcLib|OcSupportPkg/Library/OcRtcLib/OcRtcLib.inf
+  AppleEventLib|AppleSupportPkg/Library/AppleEventLib/AppleEventLib.inf
+  OcTimerLib|OcSupportPkg/Library/OcTimerLib/OcTimerLib.inf
+  OcMiscLib|OcSupportPkg/Library/OcMiscLib/OcMiscLib.inf
+  OcDevicePathLib|OcSupportPkg/Library/OcDevicePathLib/OcDevicePathLib.inf
+  OcDevicePropertyLib|OcSupportPkg/Library/OcDevicePropertyLib/OcDevicePropertyLib.inf
+  OcStringLib|OcSupportPkg/Library/OcStringLib/OcStringLib.inf
+  OcDataHubLib|OcSupportPkg/Library/OcDataHubLib/OcDataHubLib.inf
+  PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+
 
 [LibraryClasses.common]
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
@@ -459,7 +477,7 @@
   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
   #                             // significantly impact boot performance
   # DEBUG_ERROR     0x80000000  // Error
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
 
 !ifdef $(SOURCE_DEBUG_ENABLE)
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
@@ -886,3 +904,10 @@
       NULL|MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
   }
 !endif
+
+  AppleSupportPkg/Platform/AppleImageLoader/AppleImageLoader.inf
+  AppleSupportPkg/Platform/AppleUiSupport/AppleUiSupport.inf
+  AppleSupportPkg/Platform/ApfsDriverLoader/ApfsDriverLoader.inf
+  #AppleSupportPkg/Platform/AppleUsbKbDxe/UsbKbDxe.inf
+  AppleSupportPkg/Platform/VirtualSmc/VirtualSmc.inf
+  AppleSupportPkg/Platform/VBoxHfs/VBoxHfs.inf
