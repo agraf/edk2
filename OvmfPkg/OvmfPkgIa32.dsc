@@ -730,6 +730,8 @@
   MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
   MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
 
+  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+
   #
   # Network Support
   #
