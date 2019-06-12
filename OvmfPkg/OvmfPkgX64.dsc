@@ -907,9 +907,4 @@
   }
 !endif
 
-  AppleSupportPkg/Platform/AppleImageLoader/AppleImageLoader.inf
-  AppleSupportPkg/Platform/AppleUiSupport/AppleUiSupport.inf
   AppleSupportPkg/Platform/ApfsDriverLoader/ApfsDriverLoader.inf
-  #AppleSupportPkg/Platform/AppleUsbKbDxe/UsbKbDxe.inf
-  AppleSupportPkg/Platform/VirtualSmc/VirtualSmc.inf
-  AppleSupportPkg/Platform/VBoxHfs/VBoxHfs.inf

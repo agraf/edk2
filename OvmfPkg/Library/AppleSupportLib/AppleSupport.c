@@ -61,7 +61,9 @@ InitializeFirmware ()
   UINT32              BackgroundClear = 0x00000000;
   UINT32              FwFeatures      = 0x80000015;
   UINT32              FwFeaturesMask  = 0x800003ff;
-  CHAR8               BootArgs[]      = "-v";
+  CHAR8               BootArgs[]      = "-v debug=0x1004c serial=0x3 smcdebug=0xff";
+//  CHAR8               BootArgs[]      = "-v serial=0x3 smcdebug=0xff";
+  UINT32              ChipID          = 1;
 
   Status = gRT->SetVariable(L"BackgroundClear",
                             &gAppleFirmwareVariableGuid,
@@ -82,6 +84,11 @@ InitializeFirmware ()
                             &gAppleNVRAMVariableGuid,
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof(BootArgs), &BootArgs);
+
+  Status = gRT->SetVariable(L"chip-id",
+                            &gAppleNVRAMVariableGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            sizeof(ChipID), &ChipID);
 
   return Status;
 }
