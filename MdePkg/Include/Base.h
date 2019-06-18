@@ -376,6 +376,9 @@ struct _LIST_ENTRY {
 #define MAX_INT64   ((INT64)0x7FFFFFFFFFFFFFFFULL)
 #define MAX_UINT64  ((UINT64)0xFFFFFFFFFFFFFFFFULL)
 
+#define MIN_INT64   ((UINT64)~0x7fffffffffffffffll)
+#define MIN_INT32   ((UINT32)~0x7fffffff)
+
 #define  BIT0     0x00000001
 #define  BIT1     0x00000002
 #define  BIT2     0x00000004
